@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>main.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #067d17;}
+.s3 { color: #1750eb;}
+.s4 { color: #8c8c8c; font-style: italic;}
+.s5 { color: #0037a6;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">time</span>
+<span class="s0">import </span><span class="s1">string</span>
+<span class="s0">from </span><span class="s1">itertools </span><span class="s0">import </span><span class="s1">permutations</span>
+
+<span class="s0">def </span><span class="s1">chiffrement(message,dec):</span>
+    <span class="s1">caracteresNonTraite=[</span><span class="s2">' '</span><span class="s1">,</span><span class="s2">&quot;'&quot;</span><span class="s1">,</span><span class="s2">'!'</span><span class="s1">,</span><span class="s2">'.'</span><span class="s1">]</span>
+    <span class="s1">message=message.lower()</span>
+    <span class="s1">resultat=</span><span class="s2">&quot;&quot;</span>
+    <span class="s0">for </span><span class="s1">c </span><span class="s0">in </span><span class="s1">message:</span>
+        <span class="s0">if </span><span class="s1">c </span><span class="s0">not in </span><span class="s1">caracteresNonTraite:</span>
+            <span class="s1">x=ord(c)+dec</span>
+            <span class="s0">if </span><span class="s1">x&gt;ord(</span><span class="s2">'z'</span><span class="s1">):</span>
+                <span class="s1">x=x-</span><span class="s3">26</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">x=ord(c)</span>
+        <span class="s1">resultat=resultat+chr(x)</span>
+    <span class="s0">return </span><span class="s1">resultat</span>
+
+<span class="s0">def </span><span class="s1">dechiffrement(message,dec):</span>
+    <span class="s1">caracteresNonTraite=[</span><span class="s2">' '</span><span class="s1">,</span><span class="s2">&quot;'&quot;</span><span class="s1">,</span><span class="s2">'!'</span><span class="s1">,</span><span class="s2">'.'</span><span class="s1">]</span>
+    <span class="s1">message=message.lower()</span>
+    <span class="s1">retour=</span><span class="s2">&quot;&quot;</span>
+    <span class="s0">for </span><span class="s1">c </span><span class="s0">in </span><span class="s1">message:</span>
+        <span class="s0">if </span><span class="s1">c </span><span class="s0">not in </span><span class="s1">caracteresNonTraite:</span>
+            <span class="s1">x=ord(c)-dec</span>
+            <span class="s0">if </span><span class="s1">x&lt;ord(</span><span class="s2">'a'</span><span class="s1">):</span>
+                <span class="s1">x=x+</span><span class="s3">26</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">x=ord(c)</span>
+        <span class="s1">retour=retour+chr(x)</span>
+    <span class="s0">return </span><span class="s1">retour</span>
+
+<span class="s0">def </span><span class="s1">chiffrement_vigenere(mot,cle):</span>
+    <span class="s1">mot_code = </span><span class="s2">&quot;&quot;</span>
+    <span class="s4"># i récupère l'indice c le caractère du mot</span>
+    <span class="s0">for </span><span class="s1">i,c </span><span class="s0">in </span><span class="s1">enumerate(mot):</span>
+        <span class="s4"># d va récupérer le caractère de la cle et boucler</span>
+        <span class="s1">d = cle[i % len(cle)]</span>
+        <span class="s4"># On ramène la lettre A à l'indice 0 (ord('A')=65)</span>
+        <span class="s4"># d va être le décalage</span>
+        <span class="s1">d = ord(d) - </span><span class="s3">65</span>
+        <span class="s4"># On ramène aussi le caractère c sur le même principe</span>
+        <span class="s1">c = ord(c) - </span><span class="s3">65</span>
+        <span class="s4"># On va calculer le nouveau caractère pour chiffrer</span>
+        <span class="s4"># en applicant le décalage c+d et on oublie pas d'ajouter 65</span>
+        <span class="s4"># %26 permet de boucler quand on arrive après Z</span>
+        <span class="s1">nouveauCaractere = chr((c+d)%</span><span class="s3">26</span><span class="s1">+</span><span class="s3">65</span><span class="s1">)</span>
+        <span class="s1">mot_code += nouveauCaractere</span>
+    <span class="s0">return </span><span class="s1">mot_code</span>
+
+<span class="s0">def </span><span class="s1">dechiffrement_vigenere(mot,cle ):</span>
+    <span class="s1">mot_code = </span><span class="s2">&quot;&quot;</span>
+    <span class="s0">for </span><span class="s1">i,c </span><span class="s0">in </span><span class="s1">enumerate(mot):</span>
+        <span class="s1">d = cle[ i % len(cle)]</span>
+        <span class="s1">d = ord(d) - </span><span class="s3">65</span>
+        <span class="s1">mot_code += chr((ord(c)-</span><span class="s3">65</span><span class="s1">-d)%</span><span class="s3">26</span><span class="s1">+</span><span class="s3">65</span><span class="s1">)</span>
+    <span class="s0">return </span><span class="s1">mot_code</span>
+
+<span class="s0">def </span><span class="s1">attaque_dict(mot):</span>
+    <span class="s1">start = time.time()</span>
+    <span class="s1">mot=mot.upper()</span>
+    <span class="s0">with </span><span class="s1">open(</span><span class="s2">'dic.txt'</span><span class="s1">, encoding =</span><span class="s2">'utf-8'</span><span class="s1">, errors=</span><span class="s2">'ignore'</span><span class="s1">) </span><span class="s0">as </span><span class="s1">file:</span>
+        <span class="s1">lignes = []</span>
+        <span class="s0">for </span><span class="s1">readline </span><span class="s0">in </span><span class="s1">file:</span>
+            <span class="s1">lignes.append((readline.upper()))</span>
+    <span class="s1">file.close()</span>
+
+    <span class="s0">for </span><span class="s1">clef </span><span class="s0">in </span><span class="s1">lignes:</span>
+        <span class="s1">clef=clef.strip().upper()</span>
+        <span class="s1">dechif=dechiffrement_vigenere(mot,clef)</span>
+       <span class="s4"># print(dechif)</span>
+        <span class="s0">if </span><span class="s1">dechif+</span><span class="s2">&quot;</span><span class="s5">\n</span><span class="s2">&quot; </span><span class="s0">in </span><span class="s1">lignes:</span>
+            <span class="s1">end = time.time()</span>
+            <span class="s1">print(</span><span class="s2">&quot;Mot de passe KC </span><span class="s5">\n</span><span class="s2">Mot trouvé c'était :&quot;</span><span class="s1">+dechif+</span><span class="s2">&quot;</span><span class="s5">\n</span><span class="s2">Le mot de passe utlisé était &quot;</span><span class="s1">+clef)</span>
+            <span class="s1">print(</span><span class="s2">&quot;</span><span class="s5">\n</span><span class="s2">en &quot;</span><span class="s1">,end-start, </span><span class="s2">&quot; secondes&quot;</span><span class="s1">)</span>
+
+<span class="s0">def </span><span class="s1">attaque_brute(mot):</span>
+    <span class="s1">print(</span><span class="s2">&quot;Début du déchiffrement brute pour le mot &quot;</span><span class="s1">+mot)</span>
+    <span class="s1">print(</span><span class="s2">&quot;Patience je bosse &quot;</span><span class="s1">,end=</span><span class="s2">''</span><span class="s1">)</span>
+    <span class="s1">comp=</span><span class="s3">0</span>
+    <span class="s0">with </span><span class="s1">open(</span><span class="s2">'dic.txt'</span><span class="s1">, encoding =</span><span class="s2">'utf-8'</span><span class="s1">, errors=</span><span class="s2">'ignore'</span><span class="s1">) </span><span class="s0">as </span><span class="s1">file:</span>
+        <span class="s1">dic = []</span>
+        <span class="s0">for </span><span class="s1">readline </span><span class="s0">in </span><span class="s1">file:</span>
+            <span class="s1">dic.append((readline.upper()))</span>
+    <span class="s1">file.close()</span>
+    <span class="s1">start = time.time()</span>
+    <span class="s1">mot=mot.upper()</span>
+    <span class="s1">L=list(string.ascii_uppercase)</span>
+    <span class="s4"># combinaisons sur 4 lettres</span>
+    <span class="s1">combinaisons =  permutations(L,</span><span class="s3">5</span><span class="s1">)</span>
+    <span class="s1">lignes =[</span><span class="s2">''</span><span class="s1">.join(j) </span><span class="s0">for </span><span class="s1">j </span><span class="s0">in </span><span class="s1">combinaisons]</span>
+    <span class="s0">for </span><span class="s1">clef </span><span class="s0">in </span><span class="s1">lignes:</span>
+        <span class="s1">comp+=</span><span class="s3">1</span>
+        <span class="s0">if </span><span class="s1">comp&gt;</span><span class="s3">8000</span><span class="s1">:</span>
+            <span class="s1">print(</span><span class="s2">'.'</span><span class="s1">, end=</span><span class="s2">''</span><span class="s1">)</span>
+            <span class="s1">comp-=</span><span class="s3">8000</span>
+        <span class="s1">clef=clef.strip().upper()</span>
+        <span class="s1">dechif=dechiffrement_vigenere(mot,clef)</span>
+        <span class="s0">if </span><span class="s1">dechif+</span><span class="s2">&quot;</span><span class="s5">\n</span><span class="s2">&quot; </span><span class="s0">in </span><span class="s1">dic:</span>
+            <span class="s1">end = time.time()</span>
+            <span class="s1">print(</span><span class="s2">&quot;Mot de passe KC </span><span class="s5">\n</span><span class="s2">Mot trouvé c'était :&quot;</span><span class="s1">+dechif+</span><span class="s2">&quot;</span><span class="s5">\n</span><span class="s2">Le mot de passe utlisé était &quot;</span><span class="s1">+clef)</span>
+            <span class="s1">print(</span><span class="s2">&quot;</span><span class="s5">\n</span><span class="s2">en &quot;</span><span class="s1">,end-start, </span><span class="s2">&quot; secondes&quot;</span><span class="s1">)</span>
+            <span class="s0">return </span><span class="s3">1</span>
+    <span class="s0">return </span><span class="s3">0</span>
+
+<span class="s4">#cryp=chiffrement(&quot;C'est lundi et tout le monde est heureux de faire du python !&quot;,2)</span>
+<span class="s4">#print(cryp)</span>
+<span class="s4">#for dec in range(1,26):</span>
+<span class="s4">#    claire=dechiffrement(cryp,dec)</span>
+<span class="s4">#    print(claire)</span>
+<span class="s1">chiff=chiffrement_vigenere(</span><span class="s2">&quot;VENDREDI&quot;</span><span class="s1">,</span><span class="s2">&quot;GFKUG&quot;</span><span class="s1">)</span>
+<span class="s1">print(chiff)</span>
+<span class="s4">#dechiff=dechiffrement_vigenere(chiff,&quot;BTS_SIO&quot;)</span>
+<span class="s4">#print(dechiff)</span>
+<span class="s4">#attaque_dict(&quot;SCNYILAECHF&quot;)</span>
+<span class="s4">#attaque_dict(&quot;XLRYRPFP&quot;)</span>
+<span class="s1">attaque_brute(</span><span class="s2">&quot;BJXXXKIS&quot;</span><span class="s1">)</span>
+</pre>
+</body>
+</html>
