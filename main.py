@@ -5,7 +5,7 @@ import unidecode
 
 def chiffrementCesar(message,dec):
     dec=dec%25
-    caracteresNonTraite=[' ',"'",'!','.']
+    caracteresNonTraite=[' ',"'",'!','.',',']
     message=message.lower()
     resultat=""
     for c in message:
@@ -18,8 +18,9 @@ def chiffrementCesar(message,dec):
         resultat=resultat+chr(x)
     return resultat
 
+
 def dechiffrement_cesar(message,dec):
-    caracteresNonTraite=[' ',"'",'!','.']
+    caracteresNonTraite=[' ',"'",'!','.',',']
     message=message.lower()
     retour=""
     for c in message:
@@ -33,6 +34,46 @@ def dechiffrement_cesar(message,dec):
     return retour
 
 def chiffrement_vigenere(mot,cle):
+    """
+    Chiffre une chaîne avec le chiffrement de Vigenère (alphabet A–Z, majuscules).
+
+    Chaque lettre du message clair est décalée d'un nombre de positions donné par
+    la lettre correspondante de la clé (répétée), avec A=0, B=1, …, Z=25.
+    Le calcul se fait modulo 26.
+
+    Args:
+        mot (str): Message en clair à chiffrer. Doit contenir uniquement des
+            lettres majuscules A–Z (pas d'accents, pas d'espaces).
+        cle (str): Clé de chiffrement non vide, en lettres majuscules A–Z.
+
+    Returns:
+        str: Message chiffré en majuscules A–Z.
+
+    Raises:
+        ZeroDivisionError: Si `cle` est vide (len(cle) == 0).
+        ValueError: (recommandé côté appelant) si `mot` ou `cle` contient des
+            caractères hors A–Z. Cette implémentation ne le vérifie pas.
+
+    Notes:
+        - Le décalage d'une lettre `L` de la clé est `ord(L) - 65` (A->0, …, Z->25).
+        - Les caractères non alphabétiques ne sont pas gérés ici : normalisez
+          en amont (ex. `mot = re.sub('[^A-Z]', '', mot.upper())`).
+
+    Examples:
+        >>> chiffrement_vigenere("HELLOWORLD", "KEY")
+        'RIJVSUYVJN'
+        >>> chiffrement_vigenere("BONJOUR", "CLE")
+        'DZRLZYT'
+        >>> chiffrement_vigenere("VIGENERE", "CLE")
+        'XTKGYITP'
+    """
+    if not cle:
+        raise ValueError("La clé ne doit pas être vide.")
+
+        # Normalisation : majuscules
+    mot = mot.upper()
+    cle = cle.upper()
+
     mot_code = ""
     # i récupère l'indice c le caractère du mot
     for i,c in enumerate(mot):
@@ -51,6 +92,8 @@ def chiffrement_vigenere(mot,cle):
         nouveauCaractere = chr((c+d)%26+65)
         mot_code += nouveauCaractere
     return mot_code
+
+print (chiffrement_vigenere("SCIENCE","RABELAIS"))
 
 def dechiffrement_vigenere(mot,cle):
     mot_code = ""
@@ -129,10 +172,9 @@ def attaque_brute(mot):
             return 1
     return 0
 
-result=chiffrementCesar("Bonjour !",7)
-print(result)
 
-print(dechiffrement_cesar(result,7))
+
+#print(dechiffrement_cesar(result,7))
 
 #Cesar2=chiffrementCesar("C'est Mardi et tout le monde est heureux de faire du Python en bloc 3 !",2)
 #print(Cesar2)
