@@ -33,67 +33,58 @@ def dechiffrement_cesar(message,dec):
         retour=retour+chr(x)
     return retour
 
-def chiffrement_vigenere(mot,cle):
-    """
-    Chiffre une chaîne avec le chiffrement de Vigenère (alphabet A–Z, majuscules).
+import re
 
-    Chaque lettre du message clair est décalée d'un nombre de positions donné par
-    la lettre correspondante de la clé (répétée), avec A=0, B=1, …, Z=25.
-    Le calcul se fait modulo 26.
+def chiffrement_vigenere(mot: str, cle: str) -> str:
+    """
+    Chiffre une chaîne avec le chiffrement de Vigenère (alphabet ASCII A–Z).
+
+    La fonction normalise les entrées en :
+      1) convertissant en MAJUSCULES ;
+      2) supprimant tous les caractères hors A–Z
+         (espaces, accents, ponctuation, chiffres, etc.).
 
     Args:
-        mot (str): Message en clair à chiffrer. Doit contenir uniquement des
-            lettres majuscules A–Z (pas d'accents, pas d'espaces).
-        cle (str): Clé de chiffrement non vide, en lettres majuscules A–Z.
+        mot (str): Message en clair (tout caractère non A–Z sera retiré).
+        cle (str): Clé non vide (après normalisation), en lettres A–Z.
 
     Returns:
-        str: Message chiffré en majuscules A–Z.
+        str: Message chiffré (A–Z).
 
     Raises:
-        ZeroDivisionError: Si `cle` est vide (len(cle) == 0).
-        ValueError: (recommandé côté appelant) si `mot` ou `cle` contient des
-            caractères hors A–Z. Cette implémentation ne le vérifie pas.
+        ValueError: si la clé est vide après normalisation.
 
     Notes:
-        - Le décalage d'une lettre `L` de la clé est `ord(L) - 65` (A->0, …, Z->25).
-        - Les caractères non alphabétiques ne sont pas gérés ici : normalisez
-          en amont (ex. `mot = re.sub('[^A-Z]', '', mot.upper())`).
+        - Normalisation effectuée comme suit :
+          `texte_norm = re.sub('[^A-Z]', '', texte.upper())`
+        - Si vous devez conserver les espaces/ponctuations, il faut adapter
+          l'algorithme (ignorer ces caractères dans le chiffrement et les
+          réinsérer à leur place).
 
     Examples:
-        >>> chiffrement_vigenere("HELLOWORLD", "KEY")
-        'RIJVSUYVJN'
-        >>> chiffrement_vigenere("BONJOUR", "CLE")
-        'DZRLZYT'
-        >>> chiffrement_vigenere("VIGENERE", "CLE")
-        'XTKGYITP'
+        >>> chiffrement_vigenere("Hello, World!", "key")
+        'RIJVSUYVJN'          # "HELLOWORLD" chiffré avec "KEY"
+        >>> chiffrement_vigenere("BONJOUR À TOUS", "clé-123")
+        'DZRLZYTUSQ'          # accents/espaces/(-, 123) retirés
     """
+    # --- Normalisation : MAJ + suppression hors A–Z ---
+    mot = re.sub(r'[^A-Z]', '', mot.upper())
+    cle = re.sub(r'[^A-Z]', '', cle.upper())
+
     if not cle:
-        raise ValueError("La clé ne doit pas être vide.")
+        raise ValueError("La clé ne doit pas être vide après normalisation (A–Z).")
 
-        # Normalisation : majuscules
-    mot = mot.upper()
-    cle = cle.upper()
+    # --- Vigenère ---
+    mot_code = []
+    L = len(cle)
+    for i, ch in enumerate(mot):
+        d = ord(cle[i % L]) - 65   # décalage (A->0 … Z->25)
+        c = ord(ch) - 65           # lettre du message en 0..25
+        mot_code.append(chr((c + d) % 26 + 65))
+    return ''.join(mot_code)
 
-    mot_code = ""
-    # i récupère l'indice c le caractère du mot
-    for i,c in enumerate(mot):
-        # d va récupérer le caractère de la cle (mot de passe) et boucle
-        d = cle[i % len(cle)]
-        # On ramène la lettre A à l'indice 0 (ord('A')=65)
 
-        # d va être le décalage
-        d = ord(d) - 65
-
-        # On ramène aussi le caractère c sur le même principe
-        c = ord(c) - 65
-        # On va calculer le nouveau caractère pour chiffrer
-        # en applicant le décalage c+d et on oublie pas d'ajouter 65
-        # %26 permet de boucler quand on arrive après Z
-        nouveauCaractere = chr((c+d)%26+65)
-        mot_code += nouveauCaractere
-    return mot_code
-
-print (chiffrement_vigenere("SCIENCE","RABELAIS"))
+print (chiffrement_vigenere("SCIENCE SANS","RABELAIS"))
 
 def dechiffrement_vigenere(mot,cle):
     mot_code = ""
